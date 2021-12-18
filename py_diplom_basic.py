@@ -1,3 +1,4 @@
+
 import requests
 from tqdm import tqdm
 import json
@@ -5,8 +6,13 @@ import datetime
 
 class VkUser:
 
+    print('Для теста программы используйте свои регистационные данные в vk и ya, если нет возможности,тогда используйте это:\n\n 1) id vk: \n\n begemot_korovin \n\n 2) token vk:\n\n958eb5d439726565e9333aa30e50e0f937ee432e927f0dbd541c541887d919a7c56f95c04217915c32008\n')
+
+    avatar_user_vk = input('Введите свой id vk:\n')
+
+    token_vk = input('\nВведите свой token для vk:\n')
+
     url = 'https://api.vk.com/method/'
-    token_vk = ''
     version = '5.131'
     params = {
         'access_token': token_vk,
@@ -40,7 +46,7 @@ class VkUser:
         res.raise_for_status()
         info_photos_dict = res.json()
 
-        print(f'Сформирован запрос для выгрузки фотографий с аккаунта vk.com')
+        print(f'Сформирован запрос для выгрузки фотографий с аккаунта vk.com\n')
         return info_photos_dict
 
     def conversion_dict_list(self, categories_dict):
@@ -83,7 +89,7 @@ class VkUser:
         final_dict['file-name'] = str(final_dict['likes']) + '.jpg'
         info_photo_list.append(final_dict)
 
-        print(f'Сформирован список фотографий по категориям')
+        print(f'Сформирован список фотографий по категориям\n')
         return info_photo_list
 
     def create_list_information(self, count=None):
@@ -105,7 +111,7 @@ class VkUser:
         with open(name_file + '.json', "w") as f:
             json.dump(information_list, f, ensure_ascii=False, indent=4)
 
-        print(f'Информация записана в файл {name_file}')
+        print(f'Информация записана в файл {name_file}\n')
         return information_list
 
 class YaUser:
@@ -133,9 +139,9 @@ class YaUser:
         self.directory_upload = directory
 
         if 'message' in response.json():
-            print(f'Папка с названием {directory} уже существует на Я.Диске')
+            print(f'Папка с названием {directory} уже существует на Я.Диске\n')
         elif 'method' in response.json():
-            print(f'Создана папка {directory} на Я.Диске')
+            print(f'Создана папка {directory} на Я.Диске\n')
         else:
             response.raise_for_status()
         return directory
@@ -144,7 +150,8 @@ class YaUser:
 
         if isinstance(user, VkUser):
 
-            for load in tqdm(user.info_photo_list, desc='Идет загрузка фотографий', leave=False):
+            for load in tqdm(user.info_photo_list, desc='Идет загрузка фотографий\n', leave=False):
+                print('')
                 file_name = load['file-name']
                 file_url = load['url']
                 response = requests.post(
@@ -158,7 +165,7 @@ class YaUser:
                     }
                 )
 
-        print(f'Успех! Фотографии загружены на Я.Диск.')
+        print(f'Успех! Фотографии загружены на Я.Диск.\n')
         return
 
     def uploading_photos_to_disk(self, user):
@@ -174,6 +181,5 @@ class YaUser:
             return
 
 avatar_user_vk = VkUser()
-avatar_user_ya = YaUser()
-
+avatar_user_ya = YaUser('<Your Yandex Disk token>')
 avatar_user_ya.uploading_photos_to_disk(avatar_user_vk)
